@@ -7,8 +7,10 @@ class formulas:
     # Dataframe management
     def __init__(self,df) -> None:
         self.df = df.dropna()
+        self.n = len(self.df)
         self.entropy_res = collections.defaultdict(int)
         self.prob_res = collections.defaultdict(int)
+        self.knnGraph = False
     
     def setCol(self,col):
 
@@ -115,11 +117,52 @@ class formulas:
 
         return entropy,p
 
+    def dist(self,p1,p2):
+        res = 0
+        n = len(p1)
+        for i in range(n):
+            res += (p2[i][0] - p1[i][0])**2 + (p2[i][1] - p1[i][1])**2
+        return np.sqrt(res)
 
-  
+
+    def create_knn_graph(self,vals):
+        self.graph = collections.defaultdict()
+        x,y = vals[0], vals[1]
+        for idx in range(self.n):
+            self.graph[idx] = node( 
+                                    self.df.iloc[idx][x], 
+                                    self.df.iloc[idx][y],
+                                    idx,
+                                    self.df         
+                                )
+        
+
+    def init_knn(self,clusterSize,vals):
+        '''
+        vals must be x,y only
+        TODO: create dynamic vals ds
+        '''
+        self.create_knn_graph(vals)
+        
+class node(formulas):
+    
+
+    def __init__(self,x,y,idx,df) -> None:
+        self.x = x 
+        self.y = y 
+        self.idx = idx
+        # invoking the __init__ of the parent class
+        formulas.__init__(self, df)
+        
+
+        
+
+
+
 
 df = pd.read_csv('/Users/kjams/Desktop/pyVis/data/nyc.csv')
 analysis = formulas(df)
+analysis.init_knn(5,['Poverty','Income'])
 analysis.entropy('Income')
 analysis.set_x_y('Poverty','Income')
 analysis.pdf_linearBinning('Poverty')
