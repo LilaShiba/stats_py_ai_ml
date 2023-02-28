@@ -11,6 +11,7 @@ class formulas:
         self.entropy_res = collections.defaultdict(int)
         self.prob_res = collections.defaultdict(int)
         self.knnGraph = False
+        self.cols = list(self.df.columns.values)
     
     def setCol(self,col):
 
@@ -124,19 +125,19 @@ class formulas:
             res += (p2[i][0] - p1[i][0])**2 + (p2[i][1] - p1[i][1])**2
         return np.sqrt(res)
 
-
     def create_knn_graph(self,vals):
         self.graph = collections.defaultdict()
         x,y = vals[0], vals[1]
+        names = [x,y]
         for idx in range(self.n):
             self.graph[idx] = node( 
                                     self.df.iloc[idx][x], 
                                     self.df.iloc[idx][y],
                                     idx,
-                                    self.df         
+                                    self.df,
+                                    names         
                                 )
         
-
     def init_knn(self,clusterSize,vals):
         '''
         vals must be x,y only
@@ -146,11 +147,11 @@ class formulas:
         
 class node(formulas):
     
-
-    def __init__(self,x,y,idx,df) -> None:
+    def __init__(self,x,y,idx,df,names) -> None:
         self.x = x 
         self.y = y 
         self.idx = idx
+        self.names = names
         # invoking the __init__ of the parent class
         formulas.__init__(self, df)
         
@@ -160,13 +161,13 @@ class node(formulas):
 
 
 
-df = pd.read_csv('/Users/kjams/Desktop/pyVis/data/nyc.csv')
-analysis = formulas(df)
-analysis.init_knn(5,['Poverty','Income'])
-analysis.entropy('Income')
-analysis.set_x_y('Poverty','Income')
-analysis.pdf_linearBinning('Poverty')
-analysis.pdf_log_binning('Poverty')
-analysis.ctl('Poverty',1000)
-analysis.corr('Poverty','Income')
-print(df['Poverty'].corr(df['Income']))
+# df = pd.read_csv('/Users/kjams/Desktop/pyVis/data/nyc.csv')
+# analysis = formulas(df)
+# analysis.init_knn(5,['Poverty','Income'])
+# analysis.entropy('Income')
+# analysis.set_x_y('Poverty','Income')
+# analysis.pdf_linearBinning('Poverty')
+# analysis.pdf_log_binning('Poverty')
+# analysis.ctl('Poverty',1000)
+# analysis.corr('Poverty','Income')
+# print(df['Poverty'].corr(df['Income']))
