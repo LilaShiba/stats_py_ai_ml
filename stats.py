@@ -7,6 +7,8 @@ class formulas:
     # Dataframe management
     def __init__(self,df) -> None:
         self.df = df.dropna()
+        self.entropy_res = collections.defaultdict(int)
+        self.prob_res = collections.defaultdict(int)
     
     def setCol(self,col):
 
@@ -93,10 +95,32 @@ class formulas:
         plt.hist(res)
         plt.show()
 
+    def entropy(self, col):
+    
+        n = len(self.df[col])
+        h = collections.defaultdict(int)
+        
+        for node in self.df[col]:
+            h[node] += 1
+        p = []
+        for x in h.keys():
+           p.append((h[x] / n))
+
+        self.p = p
+        entropy = round(-np.sum(p * np.log2(p)),2)
+        print(entropy)
+        self.entropy_res[col] = entropy
+        self.prob_res[col] = p
+
+
+        return entropy,p
+
+
   
-  
+
 df = pd.read_csv('/Users/kjams/Desktop/pyVis/data/nyc.csv')
 analysis = formulas(df)
+analysis.entropy('Income')
 analysis.set_x_y('Poverty','Income')
 analysis.pdf_linearBinning('Poverty')
 analysis.pdf_log_binning('Poverty')
