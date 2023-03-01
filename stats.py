@@ -31,7 +31,7 @@ class formulas:
         self.createX(x)
         self.createY(y)
     
-    def corr(self,x,y):
+    def get_corr(self,x,y):
         self.set_x_y(x,y)
         top_term = 0
         btm_term_x = 0
@@ -52,7 +52,6 @@ class formulas:
         
         self.corr = top_term/np.sqrt(btm_term_x * btm_term_y)
         print(self.corr)
-        return self.corr
 
     def pdf(self,col):
         sorted_data = sorted(self.df[col],reverse=False)
