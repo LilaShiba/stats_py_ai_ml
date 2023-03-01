@@ -115,9 +115,6 @@ class formulas:
         self.entropy_res[col] = entropy
         self.prob_res[col] = p
 
-
-        return entropy,p
-
     def dist(self,p1,p2):
         res = 0
         n = len(p1)
@@ -129,14 +126,17 @@ class formulas:
         self.graph = collections.defaultdict()
         x,y = vals[0], vals[1]
         names = [x,y]
+        self.nodeList = []
+
         for idx in range(self.n):
-            self.graph[idx] = node( 
-                                    self.df.iloc[idx][x], 
-                                    self.df.iloc[idx][y],
-                                    idx,
-                                    self.df,
-                                    names         
-                                )
+            delta = node(   self.df.iloc[idx][x], 
+                            self.df.iloc[idx][y],
+                            idx,
+                            self.df,
+                            names         
+                        )
+            self.nodeList.append(delta)
+            self.graph[idx] = delta
         
     def init_knn(self,clusterSize,vals):
         '''
@@ -144,6 +144,20 @@ class formulas:
         TODO: create dynamic vals ds
         '''
         self.create_knn_graph(vals)
+    
+
+    def create_graph(self):
+        if not self.nodeList:
+            return ('No node list. Complie first')
+            
+        graph = collections.defaultdict(list)
+
+        for node in self.nodeList:
+            x,y = node.x, node.y 
+            graph[(x,y)].append(node)
+        
+        self.graph = graph
+        return graph
         
 class node(formulas):
     
@@ -154,6 +168,7 @@ class node(formulas):
         self.names = names
         # invoking the __init__ of the parent class
         formulas.__init__(self, df)
+        
         
 
         
