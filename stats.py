@@ -122,8 +122,8 @@ class formulas:
             res += (p2[i][0] - p1[i][0])**2 + (p2[i][1] - p1[i][1])**2
         return np.sqrt(res)
 
-    def create_knn_graph(self,vals):
-        self.graph = collections.defaultdict()
+    def create_node_list(self,vals):
+        self.adjList = collections.defaultdict()
         x,y = vals[0], vals[1]
         names = [x,y]
         self.nodeList = []
@@ -136,16 +136,16 @@ class formulas:
                             names         
                         )
             self.nodeList.append(delta)
-            self.graph[idx] = delta
+            self.adjList[idx] = delta
         
     def init_knn(self,clusterSize,vals):
         '''
         vals must be x,y only
         TODO: create dynamic vals ds
         '''
-        self.create_knn_graph(vals)
+        self.create_node_list(vals)
+        self.create_graph()
     
-
     def create_graph(self):
         if not self.nodeList:
             return ('No node list. Complie first')
@@ -157,6 +157,12 @@ class formulas:
             graph[(x,y)].append(node)
         
         self.graph = graph
+        delta = list(graph.keys())
+        x = [i[0] for i in delta]
+        y = [i[1] for i in delta]
+        delta = plt.scatter(x,y)
+        
+        self.visualGraph = plt.show()
         return graph
         
 class node(formulas):
